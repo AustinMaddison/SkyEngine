@@ -4,7 +4,6 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace SkyEngine;
-
 class App
 {
     private const string WindowName = "Sky Engine";
@@ -13,7 +12,7 @@ class App
 
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello World!");
+        Console.WriteLine(WindowName+" V0.01 Launching...");
 
         using (Game game = new Game(Width, Height, WindowName))
         {

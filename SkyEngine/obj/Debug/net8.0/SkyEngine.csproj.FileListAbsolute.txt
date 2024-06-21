@@ -29,3 +29,4 @@
 /home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/obj/Debug/net8.0/SkyEngine.pdb
 /home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/obj/Debug/net8.0/SkyEngine.genruntimeconfig.cache
 /home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/obj/Debug/net8.0/ref/SkyEngine.dll
+/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/obj/Debug/net8.0/SkyEngine.sourcelink.json
