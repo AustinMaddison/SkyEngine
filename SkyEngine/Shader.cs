@@ -38,7 +38,6 @@ public class Shader
       
       GL.AttachShader(Handle, vertexShader);
       GL.AttachShader(Handle, fragmentShader);
-      
       GL.LinkProgram(Handle);
       
       GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out success);
@@ -61,7 +60,6 @@ public class Shader
       if (!_disposedValue)
       {
          GL.DeleteProgram(Handle);
-
          _disposedValue = true;
       }
    }

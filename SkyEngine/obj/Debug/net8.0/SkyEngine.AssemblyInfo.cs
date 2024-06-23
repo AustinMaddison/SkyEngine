@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SkyEngine")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c7616f71b8bacf826d3bcd3a306c17e7140efb29")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+83406a1919363f7f5ccd58e373d2bda526e81704")]
 [assembly: System.Reflection.AssemblyProductAttribute("SkyEngine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SkyEngine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

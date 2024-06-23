@@ -10,12 +10,35 @@ public class Game : GameWindow
 {
     private Shader _shader;
 
+    // private readonly float[] _vertices =
+    // {
+    //     -0.5f, -0.5f, 0.0f, // left bot
+    //     0.5f, -0.5f, 0.0f, // right bot
+    //     0.0f,  0.5f, 0.0f // top mid
+    // };
+
     private readonly float[] _vertices =
-    {
-        -0.5f, -0.5f, 0.0f, // left bot
-        0.5f, -0.5f, 0.0f, // right bot
-        0.0f,  0.5f, 0.0f // top mid
-    };
+    [
+        -1.0f, -1.0f, 0.0f, // lb
+         1.0f, -1.0f, 0.0f,  // rb
+        -1.0f,  1.0f, 0.0f,  // lt
+         1.0f,  1.0f, 0.0f    // rt
+    ];
+    
+    private readonly float[] _uv_coords =
+    [
+         0.0f,  0.0f,   // lb
+         1.0f,  0.0f,   // rb
+         0.0f,  1.0f,   // lt
+         1.0f,  1.0f    // rt
+    ];
+    
+
+    private readonly int[] _triangles =
+    [
+        0, 2, 1,  // bot left
+        1, 2, 3   // top right
+    ];
     
     private int _vertexBufferObject;
     private int _vertexArrayObject;
