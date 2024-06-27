@@ -14,9 +14,9 @@ class App
     {
         Console.WriteLine(WindowName+" V0.01 Launching...");
 
-        using (Game game = new Game(Width, Height, WindowName))
+        using (Renderer renderer = new Renderer(Width, Height, WindowName))
         {
-            game.Run();
+            renderer.Run();
         }
     }
 }
