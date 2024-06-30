@@ -1,15 +1,18 @@
+using System.Diagnostics;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using All = OpenTK.Graphics.ES11.All;
-using Buffer = OpenTK.Graphics.OpenGL4.Buffer;
 
 namespace SkyEngine;
 
 public class Renderer : GameWindow
 {
 
+    private readonly string _vertexShaderSource = "C:\\dev\\SkyEngine\\SkyEngine\\Shaders\\vert.glsl";
+    private readonly string _fragmentShaderSource = "C:\\dev\\SkyEngine\\SkyEngine\\Shaders\\frag.glsl";
+    
     private readonly float[] _vertices =
     [
         -1.0f, -1.0f, 0.0f, 0.0f,  0.0f, // lb
@@ -28,9 +31,10 @@ public class Renderer : GameWindow
     private int _vertexBufferObject;
     private int _vertexArrayObject;
     private Shader _shader;
+    private Stopwatch _time;
     
     private FileSystemWatcher _shaderWatcher;
-
+    private bool _shaderChanged = false;
         
     public Renderer(int width, int height, string title) :
         base(GameWindowSettings.Default, 
@@ -59,7 +63,7 @@ public class Renderer : GameWindow
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _triangles.Length * sizeof(uint), _triangles, BufferUsageHint.StaticDraw);
         
-        _shader = new Shader("/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/Shaders/vert.glsl", "/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/Shaders/frag.glsl");
+        _shader = new Shader(_vertexShaderSource, _fragmentShaderSource);
         _shader.Use();
 
         var vertexLocation = _shader.GetAttribLocation("aPosition");
@@ -70,22 +74,33 @@ public class Renderer : GameWindow
         GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
         GL.EnableVertexAttribArray(texCoordLocation);
 
-        _shaderWatcher = new FileSystemWatcher
-        {
-            Path = Path.GetDirectoryName("/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/Shaders/frag.glsl"),
-            Filter = Path.GetFileName("/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/Shaders/frag.glsl"),
-            // Filter = "*.glsl",
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
-        };
-        _shaderWatcher.Changed += OnShaderChanged; 
-        _shaderWatcher.EnableRaisingEvents = true;
+        _time = new Stopwatch();
+        _time.Start();
+
+        // _shaderWatcher = new FileSystemWatcher
+        // {
+        //     Path = Path.GetDirectoryName(_vertexShaderSource),
+        //     Filter = "*.glsl",
+        //     NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
+        // };
+        //
+        // _shaderWatcher.Changed += OnShaderChanged; 
+        // _shaderWatcher.EnableRaisingEvents = true;
     }
     
     private void OnShaderChanged(Object sender, FileSystemEventArgs args)
     {
-        _shader = new Shader("/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/Shaders/vert.glsl", "/home/salti/dev/SkyRenderer/SkyEngine/SkyEngine/Shaders/frag.glsl");
-        _shader.Use();
-        Console.WriteLine("Recompiling Shader");
+        Console.WriteLine("Shader Source Changed...");
+        _shaderChanged = true;
+    }
+
+    private void RecompileShader()
+    {
+        Console.WriteLine("Recompiling Shader...");
+        _shader = null;
+        Thread.Sleep(1000);
+        _shader = new Shader( _vertexShaderSource, _fragmentShaderSource);
+        _shaderChanged = false;
     }
     
     protected override void OnRenderFrame(FrameEventArgs e)
@@ -95,7 +110,12 @@ public class Renderer : GameWindow
         GL.Clear(ClearBufferMask.ColorBufferBit);
         
         GL.BindVertexArray(_vertexArrayObject);
+
+        if (_shaderChanged) RecompileShader();
         
+        _shader.SetVector2("uResolution", new Vector2(this.Size.X, this.Size.Y));
+        _shader.SetFloat("uTime", (float)_time.Elapsed.TotalSeconds);
+
         _shader.Use();
         
         GL.DrawElements(PrimitiveType.Triangles, _triangles.Length, DrawElementsType.UnsignedInt, 0);
@@ -118,7 +138,11 @@ public class Renderer : GameWindow
         {
             Close();
         }
+
+        if (KeyboardState.IsKeyDown(Keys.Space))
+        {
+            RecompileShader();
+        }
     }
-    
- 
+
 }
