@@ -76,16 +76,6 @@ public class Renderer : GameWindow
 
         _time = new Stopwatch();
         _time.Start();
-
-        // _shaderWatcher = new FileSystemWatcher
-        // {
-        //     Path = Path.GetDirectoryName(_vertexShaderSource),
-        //     Filter = "*.glsl",
-        //     NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
-        // };
-        //
-        // _shaderWatcher.Changed += OnShaderChanged; 
-        // _shaderWatcher.EnableRaisingEvents = true;
     }
     
     private void OnShaderChanged(Object sender, FileSystemEventArgs args)
@@ -111,11 +101,13 @@ public class Renderer : GameWindow
         
         GL.BindVertexArray(_vertexArrayObject);
 
-        if (_shaderChanged) RecompileShader();
+        if (_shaderChanged)
+            RecompileShader();
         
         _shader.SetVector2("uResolution", new Vector2(this.Size.X, this.Size.Y));
         _shader.SetFloat("uTime", (float)_time.Elapsed.TotalSeconds);
-
+        _shader.SetVector2("uMousePos", new Vector2(MouseState.X / this.Size.X, (this.Size.Y - MouseState.Y) / this.Size.Y));
+        _shader.SetInt("uMouseBtnDown", MouseState.IsButtonDown(MouseButton.Left) ? 1 : 0);
         _shader.Use();
         
         GL.DrawElements(PrimitiveType.Triangles, _triangles.Length, DrawElementsType.UnsignedInt, 0);

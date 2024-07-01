@@ -106,9 +106,9 @@ public class Shader
     public void SetInt(string name, int data)
     {
         GL.UseProgram(Handle);
-        GL.Uniform1(_uniformLocations[name], data);
+        GL.Uniform1(GetUniformLocation(name), data);
     }
-
+    
     /// <summary>
     /// Set a uniform float on this shader.
     /// </summary>
