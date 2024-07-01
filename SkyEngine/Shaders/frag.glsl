@@ -1,4 +1,4 @@
-#version 400 core
+#version 460 core
 out vec4 FragColor;
 in vec2 TexCoord;
 
@@ -38,7 +38,7 @@ void main()
     vec2 mouse = uMousePos * uResolution.xy / uResolution.x;
     mouse = (mouse - 0.5f) * 2.0f;
     
-    vec2 uv = ( (TexCoord - 0.5)  * 2.f) * uResolution.xy / uResolution.y;
+    vec2 uv = ( (TexCoord - 0.5)  * 1.f) * uResolution.xy / uResolution.y;
 
     // raymarching
     vec3 ro = vec3(0.0f, 0.0f, -2.0f);
@@ -50,15 +50,15 @@ void main()
     {
 
 //        ro += vec3(sin(dist), cos(dist * 0.5f), 0.f)* 0.005f;
-        ro.xy += vec2(tan(uTime * 0.25) + cos(uTime), tan(uTime * 0.25) + sin(uTime) ) * 0.9f * ((sin(uTime)) + 1)/10;
-//        rd.z += (cos(uTime) + 1) / 2;
+        rd.xy += vec2(cos(uTime * .5), sin(uTime * .5)) * 0.001 * exp(pow(pow(dist, 0.33), 0.5)) * 0.5f;
+//        rd.z += (cos(uTime) + 1) / 2; 
         vec3 p = ro + rd * dist;
          
-        p.z += uTime* 5.;
+        p.z = 0.5 * ( sin(uTime * 0.3) + 1);
 //        p.x *= exp(cos(uTime));
 //        p.z *= exp(tan(uTime));
         
-        p = fract(p * 0.5f) * 2.0f - 1.f;
+        p = fract(p * 0.5f * (exp(tan(uTime * .2)))) * 2.0f - 1.f ; 
 //        
 //        p.y += sin(dist * 5.f);
 //        p.x *= cos(dist * 5.f);
