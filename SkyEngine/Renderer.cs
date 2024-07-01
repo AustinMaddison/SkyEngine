@@ -10,8 +10,8 @@ namespace SkyEngine;
 public class Renderer : GameWindow
 {
 
-    private readonly string _vertexShaderSource = "C:\\dev\\SkyEngine\\SkyEngine\\Shaders\\vert.glsl";
-    private readonly string _fragmentShaderSource = "C:\\dev\\SkyEngine\\SkyEngine\\Shaders\\frag.glsl";
+    private readonly string _vertexShaderSource = "/home/salti/dev/SkyEngine/SkyEngine/Shaders/vert.glsl";
+    private readonly string _fragmentShaderSource = "/home/salti/dev/SkyEngine/SkyEngine/Shaders/frag.glsl";
     
     private readonly float[] _vertices =
     [

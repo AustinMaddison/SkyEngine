@@ -7,8 +7,8 @@ namespace SkyEngine;
 class App
 {
     private const string WindowName = "Sky Engine";
-    private const int Width = 640;
-    private const int Height = 360;
+    private const int Width = 512;
+    private const int Height = 512;
 
     static void Main(string[] args)
     {
