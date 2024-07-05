@@ -48,7 +48,6 @@ void main()
     float dist = 0.0f;
     for (int i = 0; i < 100; i++)
     {
-
 //        ro += vec3(sin(dist), cos(dist * 0.5f), 0.f)* 0.005f;
         rd.xy += vec2(cos(uTime * .5), sin(uTime * .5)) * 0.001 * exp(pow(pow(dist, 0.33), 0.5)) * 0.5f;
 //        rd.z += (cos(uTime) + 1) / 2; 
