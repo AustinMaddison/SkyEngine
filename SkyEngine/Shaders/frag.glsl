@@ -4,6 +4,7 @@ in vec2 TexCoord;
 
 // Uniforms
 uniform vec2 uResolution;
+uniform vec3 uCloudScale;
 uniform float uTime;
 uniform vec2 uMousePos;
 uniform int uMouseBtnDown;
@@ -39,7 +40,7 @@ void main()
     mouse = (mouse - 0.5f) * 2.0f;
     
     vec2 uv = ( (TexCoord - 0.5)  * 1.f) * uResolution.xy / uResolution.y;
-
+    
     // raymarching
     vec3 ro = vec3(0.0f, 0.0f, -2.0f);
     vec3 rd = normalize(vec3(uv/0.5, 1.0f)); // translates UV's 2D -> 3D 
@@ -56,6 +57,8 @@ void main()
         p.z = 0.5 * ( sin(uTime * 0.3) + 1);
 //        p.x *= exp(cos(uTime));
 //        p.z *= exp(tan(uTime));
+        
+        p *= vec3(1.f, 1.f, 1.f) - uCloudScale;      
         
         p = fract(p * 0.5f * (exp(tan(uTime * .2)))) * 2.0f - 1.f ; 
 //        

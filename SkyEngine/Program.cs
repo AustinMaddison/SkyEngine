@@ -13,32 +13,35 @@ namespace SkyEngine;
 
 class Program
 {
-    static async Task Main()
+    static async Task Logger()
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console()
             .CreateLogger();
-
-
+        
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
     }
+    
     static void Main(string[] args)
     {
-        Main();
-        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-        GetAppSettings(out int width, out int height, out string title);
+        Logger();
+        if (GetAppSettings(out int width, out int height, out string title))
+        {
+            Log.Error("Failed getting all app settings parameters.");
+        }
         Log.Information("Configuration Loaded: {Width} {Height} {Title}", width, height, title);
         
-        Engine engine = new Engine(width, height, title);
-        engine.Run();
+        Engine.Create(width, height, title);
+        Engine.Instance.Run();
     }
-
+    
     private static bool GetAppSettings(out int width, out int height, out string title)
     {
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
         bool success = true;
 
-        string widthSetting = appSettings["width"];
+        string? widthSetting = appSettings["width"];
         if (!int.TryParse(widthSetting, out width))
         {
             width = 500;
@@ -46,7 +49,7 @@ class Program
             Log.Error("Couldn't get width in App.config. Setting width to {default width}", width);
         }
 
-        string heightSetting = appSettings["height"];
+        string? heightSetting = appSettings["height"];
         if (!int.TryParse(heightSetting, out height))
         {
             height = 500;
@@ -54,8 +57,10 @@ class Program
             Log.Error("Couldn't get height in App.config. Setting height to {default height}", height);
         }
 
-        title = appSettings["title"] + " " + appSettings["version"];
-        if (title == null)
+        string? titleName = appSettings["title"];
+        string? titleVersion = appSettings["version"];
+        title = titleName + " " + titleVersion;
+        if (titleName == null | titleVersion == null)
         {
             title = "Default Title";
             success = false;

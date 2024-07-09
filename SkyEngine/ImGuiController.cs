@@ -21,8 +21,6 @@ public class ImGuiController : IDisposable
     private int _indexBuffer;
     private int _indexBufferSize;
 
-    //private Texture _fontTexture;
-
     private int _fontTexture;
 
     private int _shader;
@@ -223,6 +221,7 @@ void main()
 
         SetPerFrameImGuiData(deltaSeconds);
         UpdateImGuiInput(wnd);
+
 
         _frameBegun = true;
         ImGui.NewFrame();

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using ImGuiNET;
+
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -13,15 +14,8 @@ namespace SkyEngine
     public class Window : GameWindow
     {
         private ImGuiController _controller;
+        private Input _input;
 
-        public static MouseState MouseState
-        {
-            get
-            {
-               return  MouseState.GetSnapshot();
-            }
-        }
-        
         private onEventCallback OnUpdate;
         private onEventCallback OnRender;
         private onEventCallback OnDrawGUI;
@@ -40,7 +34,6 @@ namespace SkyEngine
             )
         {
         }
-
         public void bindUpdateCallback(onEventCallback call)
         {
             OnUpdate = call;
@@ -58,10 +51,12 @@ namespace SkyEngine
         
         protected override void OnLoad()
         {
-            GL.ClearColor(_clearColor);
-            _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
             Title += ": OpenGL Version: "+GL.GetString(StringName.Version);
             
+            _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
+            _input = new Input(this);
+            
+            GL.ClearColor(_clearColor);
             base.OnLoad();
         }
 
@@ -104,15 +99,8 @@ namespace SkyEngine
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+            _input.OnUpdateFrame();
             OnUpdate?.Invoke();
-        }
-
-        private void HandleInput()
-        {
-            if(KeyboardState.IsKeyDown(Keys.Escape))
-            {
-                Close();    
-            }
         }
 
         protected override void OnTextInput(TextInputEventArgs e)
