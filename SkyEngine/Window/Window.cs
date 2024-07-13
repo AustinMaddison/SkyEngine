@@ -15,10 +15,13 @@ namespace SkyEngine
     {
         private ImGuiController _controller;
         private Input _input;
+        
 
         private onEventCallback OnUpdate;
         private onEventCallback OnRender;
         private onEventCallback OnDrawGUI;
+
+
         
         private readonly Color4 _clearColor = new Color4(.0f, .0f, .0f, 1f);
 
@@ -28,8 +31,8 @@ namespace SkyEngine
                 {
                     ClientSize = (width, height),
                     Title = title,
-                    Vsync = VSyncMode.On,
-                    Flags = ContextFlags.ForwardCompatible
+                    Flags = ContextFlags.ForwardCompatible,
+                    Vsync = VSyncMode.On
                 }
             )
         {
@@ -52,6 +55,8 @@ namespace SkyEngine
         protected override void OnLoad()
         {
             Title += ": OpenGL Version: "+GL.GetString(StringName.Version);
+
+            VSync = VSyncMode.Adaptive;
             
             _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
             _input = new Input(this);
@@ -115,5 +120,10 @@ namespace SkyEngine
             _controller.MouseScroll(e.Offset);
         }
         
+        public ImFontPtr GetFont(FontStyle fontStyle)
+        {
+            return _controller.GetFont(fontStyle);
+        }
     }
+    
 }

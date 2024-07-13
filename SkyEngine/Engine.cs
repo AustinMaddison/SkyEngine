@@ -1,4 +1,7 @@
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -13,8 +16,8 @@ public class Engine
 {
     private readonly Window _window;
 
-    private const string VertexShaderSource = "C:\\dev\\SkyEngine\\SkyEngine\\Shader\\vert.glsl";
-    private const string FragmentShaderSource = "C:\\dev\\SkyEngine\\SkyEngine\\Shader\\vornoi.glsl";
+    private const string VertexShaderSource = @"C:\dev\SkyEngine\SkyEngine\Resources\Shaders\vert\uv_quad.vert";
+    private const string FragmentShaderSource = @"C:\dev\SkyEngine\SkyEngine\Resources\Shaders\frag\vornoi.frag";
 
     private readonly float[] _vertices =
     [
@@ -36,19 +39,25 @@ public class Engine
     private Shader _shader;
 
     private Stopwatch _stopwatch;
+    private PerformanceMonitor _performanceMonitor;
 
+    private ImFontPtr fontReg;
+    private  ImFontPtr fontBg;
+    
     private static Engine _instance = null;
 
-    private Engine(int width, int height, string title)
+    private Engine(int width, int height, int updateFrequency, string title)
     {
         _window = new Window(width, height, title);
+        
+        OnLoad();
+        _window.UpdateFrequency = updateFrequency;
         _window.bindUpdateCallback(OnUpdate);
         _window.bindRenderCallback(OnRender);
         _window.bindDrawGUICallback(OnDrawGui);
-        OnLoad();
     }
 
-    public static Engine Create(int width, int height, string title)
+    public static Engine Create(int width, int height, int updateFrequency, string title)
     {
         if (_instance != null)
         {
@@ -56,7 +65,7 @@ public class Engine
             return _instance;
         }
 
-        _instance = new Engine(width, height, title);
+        _instance = new Engine(width, height, updateFrequency, title);
         return _instance;
     }
 
@@ -79,9 +88,9 @@ public class Engine
     }
 
     private void OnLoad()
-    {
-        _window.Clear();
-
+    { 
+        
+        _window.Clear(); 
         _vertexArrayObject = GL.GenVertexArray();
         GL.BindVertexArray(_vertexArrayObject);
 
@@ -104,9 +113,11 @@ public class Engine
         GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
         GL.EnableVertexAttribArray(texCoordLocation);
 
-        Log.Information("OpenGL {Version}", GL.GetString((StringName.Version)));
-        Log.Information("OpenGL {Extensions}", GL.GetString((StringName.Extensions)));
+        Log.Information("OpenGL {Version}", GL.GetString(StringName.Version));
+        Log.Information("OpenGL {Extensions}", GL.GetString(StringName.Extensions));
+        
         _stopwatch = new Stopwatch();
+        _performanceMonitor = new PerformanceMonitor();
         _stopwatch.Start();
     }
 
@@ -124,8 +135,8 @@ public class Engine
 
         _shader.SetVector2("uResolution", new Vector2(_window.Size.X, _window.Size.Y));
         _shader.SetFloat("uTime", (float)_stopwatch.Elapsed.TotalSeconds);
-        // _shader.SetVector2("uMousePos", new Vector2(MouseState.X / _window.Size.X, (_window.Size.Y-Window.MouseState.Y) / _window.Size.Y));
-        _shader.SetVector2("uMousePos", new Vector2(1f, 1f));
+        _shader.SetVector2("uMousePos", new Vector2(_window.MouseState.X / _window.Size.X, (_window.Size.Y-_window.MouseState.Y) / _window.Size.Y));
+        // _shader.SetVector2("uMousePos", new Vector2(1f, 1f));
         _shader.SetVector3("uCloudScale", new Vector3(uCloudScale.X, uCloudScale.Y, uCloudScale.Z));
         _shader.SetInt("uMouseBtnDown", 1);
         // _shader.SetInt("uMouseBtnDown", _window.MouseState.IsButtonDown(MouseButton.Left) ? 1 : 0);
@@ -137,13 +148,48 @@ public class Engine
         GL.DrawElements(PrimitiveType.Triangles, _triangles.Length, DrawElementsType.UnsignedInt, 0);
     }
 
+    private unsafe void CreateFont(string fontFile, float fontSize, byte mergeMode, ushort[] charRange)
+    {
+        // create the object on the native side
+        var nativeConfig = ImGuiNative.ImFontConfig_ImFontConfig();
 
+        // fill with data
+        (*nativeConfig).OversampleH = 3;
+        (*nativeConfig).OversampleV = 3;
+        (*nativeConfig).RasterizerMultiply = 1f;
+        (*nativeConfig).GlyphExtraSpacing = new System.Numerics.Vector2(0, 0);
+        (*nativeConfig).MergeMode = mergeMode;
+
+        GCHandle rangeHandle = GCHandle.Alloc(charRange, GCHandleType.Pinned);
+        try
+        {
+            ImGui.GetIO().Fonts.AddFontFromFileTTF(fontFile, fontSize, nativeConfig, rangeHandle.AddrOfPinnedObject());
+        }
+        finally
+        {
+            if (rangeHandle.IsAllocated)
+                rangeHandle.Free();
+        }
+
+        // delete the reference. ImGui copies it
+        ImGuiNative.ImFontConfig_destroy(nativeConfig);
+    }
+
+    private void PushFont(FontStyle fontStyle)
+    {
+        ImGui.PushFont(_window.GetFont(fontStyle));
+    }
+    
     private System.Numerics.Vector3 uCloudScale;
+    private int openAction = 1;
     private void OnDrawGui()
     {
+
+        // ImGui.PushFont(fontReg); 
+        
         bool noTitlebar = false;
         bool noScrollbar = false;
-        bool noMenu = false;
+        bool noMenu = true;
         bool noMove = false;
         bool noResize = false;
         bool noCollapse = false;
@@ -168,94 +214,174 @@ public class Engine
         if (unsavedDocument) windowFlags |= ImGuiWindowFlags.UnsavedDocument;
         if (noClose) pOpen = true;
 
-
         ImGuiViewportPtr viewport = ImGui.GetMainViewport();
         ImGui.SetNextWindowPos(new System.Numerics.Vector2(viewport.WorkPos.X+650, viewport.WorkPos.Y+20), ImGuiCond.FirstUseEver);
         ImGui.SetNextWindowSize(new System.Numerics.Vector2(550, 650), ImGuiCond.FirstUseEver);
         ImGui.PushItemWidth(ImGui.GetFontSize() * -12);
+
         ImGui.DockSpaceOverViewport(0, viewport, ImGuiDockNodeFlags.PassthruCentralNode);
 
+        // ImGui.SetNextWindowBgAlpha(0.85f); // Transparent background
 
         if (!ImGui.Begin("Rendering Settings", ref pOpen, windowFlags))
         {
             ImGui.End();
             return;
         }
-
-        if (ImGui.SliderFloat3("Cloud Scale", ref uCloudScale, .0f, 1f))
+        
         {
+            PushFont(FontStyle.SBD_L);
+            ImGui.Text("Sky Engine");
+            ImGui.PopFont(); 
+            // ImGui.PopFont(); 
+            ImGui.SameLine();
+            
+            PushFont(FontStyle.REG);
+            ImGui.TextColored(new System.Numerics.Vector4(1.0f, 1.0f, 1.0f, 0.5f), "v1.0");
+            ImGui.PopFont(); 
+        }
+
+        {
+            PushFont(FontStyle.MED);
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+            ImGui.Text("Stats");
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+            // Performance Monitor
+            _performanceMonitor.Update();
+
+            double ylim;
+            ylim = _window.UpdateFrequency * 1.1;
+            ImGui.PlotLines($"FPS {_performanceMonitor.FPS:F}",
+                ref _performanceMonitor.FPSBuffer[0],
+                _performanceMonitor.FPSBuffer.Length,
+                0,
+                "",
+                0.0f,
+                (float)ylim,
+                new System.Numerics.Vector2(0.0f, 80.0f)
+            );
+            ylim = 1 / _window.UpdateFrequency * 1.1;
+            ImGui.PlotLines($"Frame Time {_performanceMonitor.FrameTime:R}",
+                ref _performanceMonitor.FrameTimeBuffer[0],
+                _performanceMonitor.FrameTimeBuffer.Length,
+                0,
+                "",
+                0.0f,
+                (float)ylim,
+                new System.Numerics.Vector2(0.0f, 80.0f)
+            );
+
+            ImGui.Text($"Mouse x:{_window.MouseState.X / _window.Size.X} y:{(_window.Size.Y-_window.MouseState.Y) / _window.Size.Y}");
         }
         
+        ImGui.Spacing();
+        ImGui.Text("Settings");
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
 
-        // ImGui.CheckboxFlags(ImGui.Pa);
+        if (ImGui.Button("Expand all"))
+            openAction = 1;
+        ImGui.SameLine();
+        if (ImGui.Button("Collapse all"))
+            openAction = 0;
+
+        ImGui.Spacing();
+
+        if (openAction != -1)
+            ImGui.SetNextItemOpen(openAction != 0);
+        if (ImGui.CollapsingHeader("Clouds"))
+        {
+            if (openAction != -1)
+                ImGui.SetNextItemOpen(openAction != 0);
+            if (ImGui.TreeNode("Shape"))
+            {
+                if (ImGui.DragFloat3("Cloud Scale", ref uCloudScale, -1f, 1f))
+                {
+                }
+
+                ImGui.TreePop();
+            }
+
+
+            if (openAction != -1)
+                ImGui.SetNextItemOpen(openAction != 0);
+            if (ImGui.TreeNode("Wind"))
+            {
+                if (ImGui.DragFloat3("Cloud Scale", ref uCloudScale, -1f, 1f))
+                {
+                }
+
+                ImGui.TreePop();
+            }
+
+            if (openAction != -1)
+                ImGui.SetNextItemOpen(openAction != 0);
+            if (ImGui.TreeNode("Shading"))
+            {
+                if (ImGui.DragFloat3("Cloud Scale", ref uCloudScale, .0f, 1f))
+                {
+                }
+
+                if (ImGui.DragFloat3("Cloud Scale", ref uCloudScale, .0f, 1f))
+                {
+                }
+
+                ImGui.TreePop();
+            }
+        }
+
+        if (openAction != -1)
+            ImGui.SetNextItemOpen(openAction != 0);
+        if (ImGui.CollapsingHeader("Sky"))
+        {
+            if (openAction != -1)
+                ImGui.SetNextItemOpen(openAction != 0);
+            if (ImGui.TreeNode("Scattering"))
+            {
+                // if (ImGui.DragFloat3("Cloud Scale", ref uCloudScale, .0f, 1f))
+                // {
+                // }
+
+                ImGui.TreePop();
+            }
+
+            if (openAction != -1)
+                ImGui.SetNextItemOpen(openAction != 0);
+            if (ImGui.TreeNode("Sun"))
+            {
+                float[] zenith = new float[360];
+                for (int i = 0; i < 360; i++)
+                {
+                    zenith[i] = MathF.Sin(MathF.PI / 180 * i);
+                }
+               
+                ImGui.PlotLines("Azimuth", ref zenith[0], 360, 0, "",-1.0f,1.0f, new System.Numerics.Vector2(0.0f, 80.0f));
+                ImGui.TreePop();
+            }
+        }
+
+        openAction = -1;
+
+        // Menu under title bar
+        if (ImGui.BeginMainMenuBar())
+        {
+            if (ImGui.BeginMenu("Menu"))
+            {
+                if (ImGui.MenuItem("Quit", "Alt+F4"))
+                {
+                }
+
+                ImGui.EndMenu();
+            }
+
+            ImGui.EndMainMenuBar();
+        }
         // ImGui.ShowDemoWindow();
-        // bool my_tool_active = true;
-        // if (ImGui.BeginMenu("Options"))
-        // {
-        //     if(ImGui.MenuItem("JFFF", ""))
-        //     {
-        //         ImGui.SliderFloat3("s", ref uCloudScale, .0f, 1.0f);
-        //     }
-        //     if (ImGui.BeginMenuBar())
-        //     {
-        //     }
-        //     
-        // if (ImGui.SliderFloat3("s", ref uCloudScale, .0f, 1.0f))
-        // {
-        //     
-        // }
-
-
-        // }
-        // if (ImGui.BeginMenuBar())
-        // {
-        //   if (ImGui.SliderFloat3("Cloud Noise Scale", ref uCloudScale, .0f, .0f))
-        //     {
-        //     
-        //     }
-        //     if (ImGui.BeginMenu("Menu"))
-        //     {
-        //         if (ImGui.MenuItem("Close", "Q"))
-        //         {
-        //           
-        //         }
-        //
-        //         ImGui.EndMenu();
-        //     }
-        //
-        //     ImGui.EndMenuBar();
-        // }
-        //
-        // if (ImGui.BeginMainMenuBar())
-        // {
-        //     if (ImGui.BeginMenu("File"))
-        //     {
-        //         if (ImGui.MenuItem("Open", "CTRL+O"))
-        //         {
-        //         }
-        //
-        //         ImGui.Separator();
-        //         if (ImGui.MenuItem("Save", "CTRL+S"))
-        //         {
-        //             
-        //         }
-        //
-        //         if (ImGui.MenuItem("Save As", "CTRL+Shift+S"))
-        //         {
-        //         }
-        //
-        //         ImGui.EndMenu();
-        //     }
-        //
-        //     if (ImGui.BeginMenu("Settings"))
-        //     {
-        //         bool enabled = true;
-        //         ImGui.Checkbox("Enabled", ref enabled);
-        //         ImGui.EndMenu();
-        //     }
-        //
-        //     ImGui.EndMainMenuBar();
-        // }
 
         ImGuiController.CheckGLError("End of frame");
     }

@@ -26,17 +26,17 @@ class Program
     static void Main(string[] args)
     {
         Logger();
-        if (GetAppSettings(out int width, out int height, out string title))
+        if (GetAppSettings(out int width, out int height, out int updateFrequency, out string title))
         {
             Log.Error("Failed getting all app settings parameters.");
         }
-        Log.Information("Configuration Loaded: {Width} {Height} {Title}", width, height, title);
+        Log.Information("Configuration Loaded: {Title} w:{Width} h:{Height} hz:{UpdateFrequency}", title, width, height, updateFrequency);
         
-        Engine.Create(width, height, title);
+        Engine.Create(width, height, updateFrequency, title);
         Engine.Instance.Run();
     }
     
-    private static bool GetAppSettings(out int width, out int height, out string title)
+    private static bool GetAppSettings(out int width, out int height, out int updateFrequency, out string title)
     {
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
         bool success = true;
@@ -56,7 +56,15 @@ class Program
             success = false;
             Log.Error("Couldn't get height in App.config. Setting height to {default height}", height);
         }
-
+        
+        string? updateFrequencySettings = appSettings["updateFrequency"];
+        if (!int.TryParse(updateFrequencySettings, out updateFrequency))
+        {
+            updateFrequency = 60;
+            success = false;
+            Log.Error("Couldn't get update frequency in App.config. Setting frequency to {default updateFrequency}", updateFrequency);
+        }
+        
         string? titleName = appSettings["title"];
         string? titleVersion = appSettings["version"];
         title = titleName + " " + titleVersion;
@@ -66,6 +74,7 @@ class Program
             success = false;
             Log.Error("Couldn't get title in App.config. Setting title to {default title}", title);
         }
+        
         return success;
     }
 }

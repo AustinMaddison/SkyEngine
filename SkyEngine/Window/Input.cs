@@ -54,10 +54,10 @@ namespace SkyEngine;
             }
 
             // Exit
-            if (KeyDown(Keys.Escape))
-            {
-                _window.Close();
-            }
+            // if (KeyDown(Keys.Escape))
+            // {
+            //     _window.Close();
+            // }
             if (KeyDown(Keys.Space))
             {
                 Engine.Instance.RecompileShader();
