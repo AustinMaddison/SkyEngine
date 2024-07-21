@@ -70,55 +70,54 @@ public class ImGuiController : IDisposable
         {
             fontMap = new Dictionary<FontStyle, ImFontPtr>();
             var fontPath = @"C:\dev\SkyEngine\SkyEngine\Resources\Fonts";
-            var fontName = @""
-            var m = 15.0f;
-            var s = 13.0f;
-            var l = 18.0f;
+            var fontName = @"";
+            var fontSizeMed = 15.0f; 
+            var fontSizeSmall = 13.0f;
+            var fontSizeLarge = 18.0f;
             
-            fontMap[FontStyle.SBD] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBold.ttf", m);
-            fontMap[FontStyle.THN] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Thin.ttf", m);
-            fontMap[FontStyle.LIT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Light.ttf", m);
-            fontMap[FontStyle.REG] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Regular.ttf", m);
-            fontMap[FontStyle.MED] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Medium.ttf", m);
-            fontMap[FontStyle.BLD] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Bold.ttf", m);
+            fontMap[FontStyle.SBD] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBold.ttf", fontSizeMed);
+            fontMap[FontStyle.THN] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Thin.ttf", fontSizeMed);
+            fontMap[FontStyle.LIT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Light.ttf", fontSizeMed);
+            fontMap[FontStyle.REG] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Regular.ttf", fontSizeMed);
+            fontMap[FontStyle.MED] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Medium.ttf", fontSizeMed);
+            fontMap[FontStyle.BLD] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Bold.ttf", fontSizeMed);
             
-            fontMap[FontStyle.THN_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Thin.ttf", s);
-            fontMap[FontStyle.LIT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Light.ttf", s);
-            fontMap[FontStyle.REG_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Regular.ttf", s);
-            fontMap[FontStyle.MED_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Medium.ttf", s);
-            fontMap[FontStyle.SBD_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBold.ttf", s);
-            fontMap[FontStyle.BLD_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Bold.ttf", s);
+            fontMap[FontStyle.THN_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Thin.ttf", fontSizeSmall);
+            fontMap[FontStyle.LIT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Light.ttf", fontSizeSmall);
+            fontMap[FontStyle.REG_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Regular.ttf", fontSizeSmall);
+            fontMap[FontStyle.MED_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Medium.ttf", fontSizeSmall);
+            fontMap[FontStyle.SBD_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBold.ttf", fontSizeSmall);
+            fontMap[FontStyle.BLD_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Bold.ttf", fontSizeSmall);
             
-            fontMap[FontStyle.THN_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Thin.ttf", l);
-            fontMap[FontStyle.LIT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Light.ttf", l);
-            fontMap[FontStyle.REG_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Regular.ttf", l);
-            fontMap[FontStyle.MED_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Medium.ttf", l);
-            fontMap[FontStyle.SBD_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBold.ttf", l);
-            fontMap[FontStyle.BLD_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Bold.ttf", l);
+            fontMap[FontStyle.THN_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Thin.ttf", fontSizeLarge);
+            fontMap[FontStyle.LIT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Light.ttf", fontSizeLarge);
+            fontMap[FontStyle.REG_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Regular.ttf", fontSizeLarge);
+            fontMap[FontStyle.MED_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Medium.ttf", fontSizeLarge);
+            fontMap[FontStyle.SBD_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBold.ttf", fontSizeLarge);
+            fontMap[FontStyle.BLD_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-Bold.ttf", fontSizeLarge);
             
-            fontMap[FontStyle.SBD_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBoldItalic.ttf", m);
-            fontMap[FontStyle.THN_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-ThinItalic.ttf", m);
-            fontMap[FontStyle.LIT_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-LightItalic.ttf", m);
-            fontMap[FontStyle.REG_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-RegularItalic.ttf", m);
-            fontMap[FontStyle.MED_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-MediumItalic.ttf", m);
-            fontMap[FontStyle.BLD_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-BoldItalic.ttf", m);
+            fontMap[FontStyle.SBD_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBoldItalic.ttf", fontSizeMed);
+            fontMap[FontStyle.THN_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-ThinItalic.ttf", fontSizeMed);
+            fontMap[FontStyle.LIT_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-LightItalic.ttf", fontSizeMed);
+            fontMap[FontStyle.REG_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-RegularItalic.ttf", fontSizeMed);
+            fontMap[FontStyle.MED_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-MediumItalic.ttf", fontSizeMed);
+            fontMap[FontStyle.BLD_IT] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-BoldItalic.ttf", fontSizeMed);
             
-            fontMap[FontStyle.THN_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-ThinItalic.ttf", s);
-            fontMap[FontStyle.LIT_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-LightItalic.ttf", s);
-            fontMap[FontStyle.REG_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-RegularItalic.ttf", s);
-            fontMap[FontStyle.MED_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-MediumItalic.ttf", s);
-            fontMap[FontStyle.SBD_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBoldItalic.ttf", s);
-            fontMap[FontStyle.BLD_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-BoldItalic.ttf", s);
+            fontMap[FontStyle.THN_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-ThinItalic.ttf", fontSizeSmall);
+            fontMap[FontStyle.LIT_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-LightItalic.ttf", fontSizeSmall);
+            fontMap[FontStyle.REG_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-RegularItalic.ttf", fontSizeSmall);
+            fontMap[FontStyle.MED_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-MediumItalic.ttf", fontSizeSmall);
+            fontMap[FontStyle.SBD_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBoldItalic.ttf", fontSizeSmall);
+            fontMap[FontStyle.BLD_IT_S] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-BoldItalic.ttf", fontSizeSmall);
             
-            fontMap[FontStyle.THN_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-ThinItalic.ttf", l);
-            fontMap[FontStyle.LIT_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-LightItalic.ttf", l);
-            fontMap[FontStyle.REG_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-RegularItalic.ttf", l);
-            fontMap[FontStyle.MED_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-MediumItalic.ttf", l);
-            fontMap[FontStyle.SBD_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBoldItalic.ttf", l);
-            fontMap[FontStyle.BLD_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-BoldItalic.ttf", l);
+            fontMap[FontStyle.THN_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-ThinItalic.ttf", fontSizeLarge);
+            fontMap[FontStyle.LIT_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-LightItalic.ttf", fontSizeLarge);
+            fontMap[FontStyle.REG_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-RegularItalic.ttf", fontSizeLarge);
+            fontMap[FontStyle.MED_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-MediumItalic.ttf", fontSizeLarge);
+            fontMap[FontStyle.SBD_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-SemiBoldItalic.ttf", fontSizeLarge);
+            fontMap[FontStyle.BLD_IT_L] = io.Fonts.AddFontFromFileTTF(fontPath + @"\IBMPlexMono-BoldItalic.ttf", fontSizeLarge);
             
         }
-        
         
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
         // Enable Docking
