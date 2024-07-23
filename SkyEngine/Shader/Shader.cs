@@ -135,6 +135,12 @@ public class Shader
         GL.UseProgram(Handle);
         GL.UniformMatrix4(GetUniformLocation(name), true, ref data);
     }
+    
+    public void SetVector4(string name, Vector4 data)
+    {
+        GL.UseProgram(Handle);
+        GL.Uniform4(GetUniformLocation(name), data);
+    }
 
     /// <summary>
     /// Set a uniform Vector3 on this shader.

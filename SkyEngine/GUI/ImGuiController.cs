@@ -43,6 +43,11 @@ public class ImGuiController : IDisposable
     {
         return fontMap[fontStyle];
     }
+    
+    private void ScaleImGui(float scaleFactor)
+    {
+        ImGui.GetIO().FontGlobalScale = scaleFactor;
+    }
 
     /// <summary>
     /// Constructs a new ImGuiController.
@@ -65,6 +70,9 @@ public class ImGuiController : IDisposable
         ImGui.SetCurrentContext(context);
 
         var io = ImGui.GetIO();
+        
+        // Scale GUI Globally
+        ScaleImGui(0.8f);
         
         // Setup Fonts
         {
